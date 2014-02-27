@@ -1,7 +1,7 @@
 /*!
  * Version: 1.0
  * Started: 30-05-2013
- * Updated: 30-05-2013
+ * Updated: 27-02-2014
  * Url    : 
  * Author : paramana (hello AT paramana DOT com)
  *
@@ -31,6 +31,8 @@ define("Gauge", [], function() {
         this.degrees = 0;
         this.withAnim = options.anim != null ? options.anim : true;
         this.endDegrees = !options.end ? 0 : ((options.end / 100) * 361);
+        this.circleSize = options.circleSize || 60;
+        this.strokeSize = options.strokeSize || 10;
 
         this.draw();
     }
@@ -88,8 +90,8 @@ define("Gauge", [], function() {
         //Background 360 degree arc
         ctx.beginPath();
         ctx.strokeStyle = this.bgcolor;
-        ctx.lineWidth   = 10;
-        ctx.arc(width / 2, height / 2, 60, 0, Math.PI * 2, false); //you can see the arc now
+        ctx.lineWidth   = this.strokeSize;
+        ctx.arc(width / 2, height / 2, this.circleSize, 0, Math.PI * 2, false); //you can see the arc now
         ctx.stroke();
 
         //gauge will be a simple arc
@@ -97,10 +99,10 @@ define("Gauge", [], function() {
         radians = this.degrees * Math.PI / 180;
         ctx.beginPath();
         ctx.strokeStyle = this.color;
-        ctx.lineWidth = 10;
+        ctx.lineWidth = this.strokeSize;
         //The arc starts from the rightmost end. If we deduct 90 degrees from the angles
         //the arc will start from the topmost end
-        ctx.arc(width / 2, height / 2, 60, 0 - 90 * Math.PI / 180, radians - 90 * Math.PI / 180, false);
+        ctx.arc(width / 2, height / 2, this.circleSize, 0 - 90 * Math.PI / 180, radians - 90 * Math.PI / 180, false);
         //you can see the arc now
         ctx.stroke();
 
@@ -119,7 +121,7 @@ define("Gauge", [], function() {
             textY = height / 2 + 6;
     
         ctx.fillText(text, textX, textY);
-    }
+    };
     
     Gauge.prototype.destroy = function(){
         clearInterval(this.animationTimer);
