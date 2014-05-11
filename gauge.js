@@ -20,6 +20,12 @@ define("Gauge", [], function() {
         
         this.element = element;
         this.$element = $(element);
+
+        if (!element.getContext) {
+            this.destroy();
+            return;
+        }
+
         this.ctx = element.getContext("2d");
 
         this.width   = this.$element.width(),
@@ -126,7 +132,8 @@ define("Gauge", [], function() {
     Gauge.prototype.destroy = function(){
         clearInterval(this.animationTimer);
         this.$element.remove();
-        delete this.ctx;
+        if (this.ctx)
+            delete this.ctx;
     };
     
     return Gauge;
