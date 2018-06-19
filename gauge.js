@@ -6,8 +6,9 @@
  * Author : paramana (hello AT paramana DOT com)
  *
  */
-
-define("Gauge", [], function() {
+define([
+    'jquery'
+], function($) {
     // Using ECMAScript 5 strict mode during development. By default r.js will ignore that.
     "use strict";
     
