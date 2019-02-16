@@ -1,24 +1,21 @@
 /*!
- * Version: 1.0
+ * Version: 1.1
  * Started: 30-05-2013
- * Updated: 27-02-2014
- * Url    : 
+ * Updated: 16-02-2019
  * Author : paramana (hello AT paramana DOT com)
  *
  */
-define("Gauge", [
-    'jquery'
-], function($) {
+define('Gauge', ['jquery'], function($) {
     // Using ECMAScript 5 strict mode during development. By default r.js will ignore that.
-    "use strict";
-    
+    'use strict';
+
     function Gauge(element, options){
         if (!element)
             return;
-        
+
         if (!options)
             options = {};
-        
+
         this.element = element;
         this.$element = $(element);
 
@@ -27,64 +24,57 @@ define("Gauge", [
             return;
         }
 
-        this.ctx = element.getContext("2d");
+        this.ctx = element.getContext('2d');
 
         this.width   = this.$element.width(),
         this.height  = this.$element.height();
-        this.color   = options.color || "#31c995";
-        this.bgcolor = options.bgcolor || "#f0f0f0";
-        this.font    = options.font || "bold 16px arial"
-        this.fontColor = options.fontColor || "#6d6d6d";
+        this.color   = options.color || '#31c995';
+        this.bgcolor = options.bgcolor || '#f0f0f0';
+        this.font    = options.font || 'bold 16px arial'
+        this.fontColor = options.fontColor || '#6d6d6d';
         this.degrees = 0;
         this.withAnim = options.anim != null ? options.anim : true;
         this.endDegrees = !options.end ? 0 : ((options.end / 100) * 361);
         this.circleSize = options.circleSize || 60;
         this.strokeSize = options.strokeSize || 10;
+        this.animTime = options.animTime || 100 // 1 sec
 
         this.draw();
     }
-    
+
     Gauge.prototype.animateTo = function(){
         //clear animation loop if degrees reaches to endDegrees
-        if (this.degrees == this.endDegrees)
+        if (this.degrees >= this.endDegrees)
             clearInterval(this.animationTimer);
 
         if (this.degrees < this.endDegrees)
             this.degrees++;
-//        else
-//            this.degrees--;
-        
-//        this.color = this.degrees >= 270 
-//                            ? "#31c995" 
-//                            : (this.degrees >= 170 
-//                                    ? "#ffc35a" 
-//                                    : "#ff4c4c");
-        
+
         this.calculate();
     };
-    
+
     Gauge.prototype.draw = function(){
         if (!this.withAnim) {
             this.degrees = this.endDegrees;
             this.calculate();
             return;
         }
-        
+
         //Cancel any movement animation if a new chart is requested
         if (this.animationTimer)
             clearInterval(this.animationTimer);
-        
+
         var _self      = this,
             difference = this.endDegrees - this.degrees;
-    
+
         //This will animate the gauge to new positions
-        //The animation will take 1 second
-        //time for each frame is 1sec / difference in degrees
+        //The animation will take animTime second
+        //time for each frame is animTime in sec sec / difference in degrees
         this.animationTimer = setInterval(function(){
-            _self.animateTo()
-        }, 100 / difference);
+            _self.animateTo();
+        }, this.animTime / difference);
     }
-    
+
     Gauge.prototype.calculate = function(){
         var ctx    = this.ctx,
             width  = this.width,
@@ -117,25 +107,25 @@ define("Gauge", [
         ctx.fillStyle = this.fontColor;
         ctx.font = this.font;
 
-        text = Math.floor(this.degrees / 360 * 100) + "%";
+        text = Math.floor(this.degrees / 360 * 100) + '%';
         //Lets center the text
         //deducting half of text width from position x
         text_width = ctx.measureText(text).width;
         //adding manual value to position y since the height of the text cannot
         //be measured easily. There are hacks but we will keep it manual for now.
-        
+
         var textX = (width / 2 - text_width / 2) + 3,
             textY = height / 2 + 6;
-    
+
         ctx.fillText(text, textX, textY);
     };
-    
+
     Gauge.prototype.destroy = function(){
         clearInterval(this.animationTimer);
         this.$element.remove();
         if (this.ctx)
             delete this.ctx;
     };
-    
+
     return Gauge;
 });
