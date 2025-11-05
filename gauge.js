@@ -1,15 +1,15 @@
 /*!
  * Version: 1.1
  * Started: 30-05-2013
- * Updated: 16-02-2019
+ * Updated: 05-11-2025
  * Author : paramana (hello AT paramana DOT com)
  *
  */
-define('Gauge', ['jquery'], function($) {
+define('Gauge', ['jquery'], function ($) {
     // Using ECMAScript 5 strict mode during development. By default r.js will ignore that.
     'use strict';
 
-    function Gauge(element, options){
+    function Gauge(element, options) {
         if (!element)
             return;
 
@@ -26,11 +26,11 @@ define('Gauge', ['jquery'], function($) {
 
         this.ctx = element.getContext('2d');
 
-        this.width   = this.$element.width(),
-        this.height  = this.$element.height();
-        this.color   = options.color || '#31c995';
+        this.width = this.$element.width(),
+            this.height = this.$element.height();
+        this.color = options.color || '#31c995';
         this.bgcolor = options.bgcolor || '#f0f0f0';
-        this.font    = options.font || 'bold 16px arial'
+        this.font = options.font || 'bold 16px arial'
         this.fontColor = options.fontColor || '#6d6d6d';
         this.degrees = 0;
         this.withAnim = options.anim != null ? options.anim : true;
@@ -42,7 +42,7 @@ define('Gauge', ['jquery'], function($) {
         this.draw();
     }
 
-    Gauge.prototype.animateTo = function(){
+    Gauge.prototype.animateTo = function () {
         //clear animation loop if degrees reaches to endDegrees
         if (this.degrees >= this.endDegrees)
             clearInterval(this.animationTimer);
@@ -53,7 +53,7 @@ define('Gauge', ['jquery'], function($) {
         this.calculate();
     };
 
-    Gauge.prototype.draw = function(){
+    Gauge.prototype.draw = function () {
         if (!this.withAnim) {
             this.degrees = this.endDegrees;
             this.calculate();
@@ -64,20 +64,20 @@ define('Gauge', ['jquery'], function($) {
         if (this.animationTimer)
             clearInterval(this.animationTimer);
 
-        var _self      = this,
+        var _self = this,
             difference = this.endDegrees - this.degrees;
 
         //This will animate the gauge to new positions
         //The animation will take animTime second
         //time for each frame is animTime in sec sec / difference in degrees
-        this.animationTimer = setInterval(function(){
+        this.animationTimer = setInterval(function () {
             _self.animateTo();
         }, this.animTime / difference);
     }
 
-    Gauge.prototype.calculate = function(){
-        var ctx    = this.ctx,
-            width  = this.width,
+    Gauge.prototype.calculate = function () {
+        var ctx = this.ctx,
+            width = this.width,
             height = this.height,
             text, text_width, radians;
 
@@ -87,7 +87,7 @@ define('Gauge', ['jquery'], function($) {
         //Background 360 degree arc
         ctx.beginPath();
         ctx.strokeStyle = this.bgcolor;
-        ctx.lineWidth   = this.strokeSize;
+        ctx.lineWidth = this.strokeSize;
         ctx.arc(width / 2, height / 2, this.circleSize, 0, Math.PI * 2, false); //you can see the arc now
         ctx.stroke();
 
@@ -120,11 +120,15 @@ define('Gauge', ['jquery'], function($) {
         ctx.fillText(text, textX, textY);
     };
 
-    Gauge.prototype.destroy = function(){
-        clearInterval(this.animationTimer);
-        this.$element.remove();
-        if (this.ctx)
-            delete this.ctx;
+    Gauge.prototype.destroy = function () {
+        if (this.animationTimer) {
+            clearInterval(this.animationTimer);
+            this.animationTimer = null;
+        }
+
+        this.element = null;
+        this.$element = null;
+        this.ctx = null;
     };
 
     return Gauge;
